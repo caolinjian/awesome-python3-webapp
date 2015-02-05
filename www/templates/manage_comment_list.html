@@ -1,0 +1,162 @@
+{% extends '__base__1.html' %}
+
+{% block title %}评论{% endblock %}
+{% block beforehead %}
+<style>
+  .spinner {
+    margin: 100px auto;
+    width: 250px;
+    height: 150px;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  .spinner > div {
+    background-color: #1289ab;
+    height: 100%;
+    width: 30px;
+    display: inline-block;
+    
+    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+    animation: stretchdelay 1.2s infinite ease-in-out;
+  }
+
+  .spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+  }
+
+  .spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+
+  .spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+  }
+
+  .spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+  }
+
+  @-webkit-keyframes stretchdelay {
+    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+    20% { -webkit-transform: scaleY(1.0) }
+  }
+
+  @keyframes stretchdelay {
+    0%, 40%, 100% { 
+      transform: scaleY(0.4);
+      -webkit-transform: scaleY(0.4);
+    } 20% {
+      transform: scaleY(1.0);
+      -webkit-transform: scaleY(1.0);
+    }
+  }
+</style>
+{% endblock %}
+{% block afterbody %}
+
+<script>
+
+function initVM(data) {
+    $('#div-comments').show();
+    var vm = new Vue({
+        el: '#div-comments',
+        data: {
+            comments: data.comments,
+            page: data.page
+        },
+        methods: {
+            previous: function () {
+                gotoPage(this.page.page_index - 1);
+            },
+            next: function () {
+                gotoPage(this.page.page_index + 1);
+            },
+            delete_comment: function (comment) {
+                var content = comment.content.length > 20 ? comment.content.substring(0, 20) + '...' : comment.content;
+                showConfirm('确认删除？', '确认要删除评论“' + comment.content + '”？删除后不可恢复！', function () {
+                    postApi('/api/comments/' + comment.id + '/delete', {}, function (err, r) {
+                        if (err) {
+                            return showError(err);
+                        }
+                        location.reload();
+                    });
+                });
+            }
+        }
+    });
+}
+
+$(function() {
+    getApi('/api/comments?page={{ page_index }}', function (err, results) {
+        if (err) {
+            return showError(err);
+        }
+        $('#div-loading').hide();
+        initVM(results);
+    });
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar-btn">
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="/manage/blogs">日志</a></li>
+        <li role="presentation" class="active"><a href="#">评论</a></li>
+        <li role="presentation"><a href="/manage/users">用户</a></li>
+      </ul>
+    </nav>
+    <div style='display:none;' class="alert alert-danger" role="alert"></div>
+    <div id="div-comments" style="display:none;word-break:break-all;">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>作者</th>
+                    <th>内容</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-repeat="comment: comments" >
+                    <td>
+                        <span v-text="comment.user_name"></span>
+                    </td>
+                    <td>
+                        <span v-text="comment.content"></span>
+                    </td>
+                    <td>
+                        <span v-text="comment.created_at.toDateTime()"></span>
+                    </td>
+                    <td>
+                        <a href="#0" v-on="click: delete_comment(comment)"><i class="fa fa-trash-o"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="pagination">
+            <li v-if="! page.has_previous" disabled="disabled"><span><i class="fa fa-angle-double-left"></i></span></li>
+            <li v-if="page.has_previous"><a v-on="click: previous()" href="#0"><i class="fa fa-angle-double-left"></i></a></li>
+            <li><span v-text="page.page_index"></span></li>
+            <li v-if="! page.has_next" disabled="disabled"><span><i class="fa fa-angle-double-right"></i></span></li>
+            <li v-if="page.has_next"><a v-on="click: next()" href="#0"><i class="fa fa-angle-double-right"></i></a></li>
+        </ul>
+    </div>
+
+    <div id="div-loading" class="uk-width-1-1 uk-text-center">
+      <div class="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
+    </div>
+{% endblock %}

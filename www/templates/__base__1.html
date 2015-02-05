@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% block meta %}<!-- block meta  -->{% endblock %}
+    <title>{% block title %} ? {% endblock %} - Awesome Python Webapp</title>
+    <!-- font-awesome -->
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+	      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+		<style>
+			.navbar-default .navbar-toggle:focus,
+			.navbar-default .navbar-toggle:hover {
+				background-color: transparent;
+			}
+			.navbar-default .navbar-toggle {
+				border-color: transparent;
+			}
+			.navbar-default {
+				background-color: #f5f5f5;
+				border-bottom: 1px solid #ddd;
+			}
+      a:hover, a:active {
+        text-decoration: none;
+      }
+      .uk-article-meta{
+        font-size: 12px;
+        line-height: 18px;
+        color: #999;
+      }
+      html {
+        position: relative;
+        min-height: 100%;
+      }
+      .alert {
+        padding: 10px;
+      }
+      body {
+        /* Margin bottom by footer height */
+        margin-bottom: 190px;
+      }
+      .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        padding-top: 15px;
+      }
+		</style>
+    {% block beforehead %}<!-- before head  -->{% endblock %}
+</head>
+<body>
+    <nav class="navbar-default" role="navigation">
+			<div class="container">
+
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">Awesome</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="/"><i class="fa fa-home"></i> 日志</a>
+						</li>
+						<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000"><i class="fa fa-book"></i> 教程</a>
+						</li>
+						<li><a href="https://github.com/caolinjian/awesome-python-webapp/tree/release"><i class="fa fa-code"></i> 源码</a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+          {% if user %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ user.name }}</a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/signout"><i class="fa fa-sign-out"></i> 登出</a></li>
+              </ul>
+            </li>
+          {% else %}
+						<li><a href="/signin"><i class="fa fa-sign-in"></i> 登录</a>
+						</li>
+						<li><a href="/register"><i class="fa fa-edit"></i> 注册</a>
+						</li>
+          {% endif %}
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+		</nav>
+
+    <div class="container">
+      <!-- content -->
+      {% block content %}
+      {% endblock %}
+      <!-- // content -->
+    </div>
+
+    
+    <footer class="footer" style="text-align: center;background-color:#f5f5f5;bottom:0px;">
+      <p>
+          <a target="_blank" href="http://weibo.com/liaoxuefeng"><i class="fa fa-weibo fa-2x"></i></a>&nbsp;
+          <a target="_blank" href="https://github.com/michaelliao"><i class="fa fa-github fa-2x"></i></a>&nbsp;
+          <a target="_blank" href="http://www.linkedin.com/in/liaoxuefeng"><i class="fa fa-linkedin-square fa-2x"></i></a>&nbsp;
+          <a target="_blank" href="https://twitter.com/liaoxuefeng"><i class="fa fa-twitter fa-2x"></i></a>
+      </p>
+      <p>Powered by <a href="http://awesome.liaoxuefeng.com">Awesome Python Webapp</a>. Copyright &copy; 2014. [<a href="/manage/" target="_blank">Manage</a>]</p>
+      <p><a href="http://www.liaoxuefeng.com/" target="_blank">www.liaoxuefeng.com</a>. All rights reserved.</p>
+      <a target="_blank" href="http://www.w3.org/TR/html5/"><i class="fa fa-html5" style="font-size:64px; color: #444;"></i></a>
+
+    </footer>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/static/js/md5.js"></script>
+		<script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    {% block afterbody %}<!-- before head  -->{% endblock %}
+</body>
+</html>

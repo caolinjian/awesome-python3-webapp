@@ -1,0 +1,112 @@
+{% extends '__base__1.html' %}
+
+{% block title %}{{ blog.name }}{% endblock %}
+
+{% block beforehead %}
+<link href="/static/css/default.css" rel="stylesheet">
+{% endblock %}
+{% block afterbody %}
+<script>
+
+var comment_url = '/api/blogs/{{ blog.id }}/comments';
+
+$(function () {
+    $('#form-comment').submit(function (e) {
+        e.preventDefault();
+        var $btn = $("[type='submit']").button('loading');
+        var content = $('#form-comment textarea').val().trim();
+        if (content==='') {
+            return showError('请输入评论内容！');
+        }
+        $btn.button('reset');
+        postApi(comment_url, {content: content}, function (err, result) {
+            if (err) {
+                showError(err);
+                stopLoading();
+                return;
+            }
+            location.reload();
+        });
+    });
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <article>
+          <h2>{{ blog.name }}</h2>
+          <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
+          <p>{{ blog.html_content|safe }}</p>
+      </article>
+
+      <hr>
+
+      {% if user %}
+      <h3>发表评论</h3>
+
+      <article>
+          <header>
+              <img width="50" height="50" src="{{ user.image }}">
+              <h4>{{ user.name }}</h4>
+          </header>
+          <div>
+              <form id="form-comment" class="uk-form">
+                  <div style='display:none;' class="alert alert-danger" role="alert"></div>
+                  <div class="form-group">
+                      <textarea class="form-control" rows="6" placeholder="说点什么吧"></textarea>
+                  </div>
+                  <div class="form-group">
+                      <button type="submit" data-loading-text="发表ing..." class="btn btn-primary"><i class="fa fa-comment"></i> 发表评论</button>
+                  </div>
+              </form>
+          </div>
+      </article>
+
+      <hr>
+      {% endif %}
+
+      <h3>最新评论</h3>
+
+      <ul class="list-group">
+          {% for comment in comments %}
+          <li class="list-group-item">
+            <article class="media">
+              <div class="media-left">
+                  <img width="50" height="50" src="{{ comment.user_image }}">
+              </div>
+              <div class="media-body">
+                  <p>{{ comment.content }}</p>
+                  <p class="uk-article-meta">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}&nbsp;&nbsp;{{ comment.created_at|datetime }}</p>
+              </div>
+            </article>
+          </li>
+          {% else %}
+          <p>还没有人评论...</p>
+          {% endfor %}
+      </ul>
+
+    </div>
+    <aside class="col-sm-3 hidden-xs">
+      <div class="page-header">
+          <div class="center-block">
+              <img width="120" height="120" src="{{ blog.user_image }}">
+              <h3>{{ blog.user_name }}</h3>
+          </div>
+      </div>
+      <br>
+      <div class="panel panel-default">
+        <div class="panel-heading">友情链接</div>
+        <div class="list-group">
+          <a class="list-group-item" href="http://www.liaoxuefeng.com/category/0013738748415562fee26e070fa4664ad926c8e30146c67000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; 编程</a>
+          <a class="list-group-item" href="http://www.liaoxuefeng.com/category/0013738748248885ddf38d8cd1b4803aa74bcda32f853fd000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; 读书</a>
+          <a class="list-group-item" href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; Python教程</a>
+          <a class="list-group-item" href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; Git教程</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+{% endblock %}

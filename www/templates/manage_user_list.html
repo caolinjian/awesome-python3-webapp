@@ -1,0 +1,89 @@
+{% extends '__base__1.html' %}
+
+{% block title %}用户{% endblock %}
+
+{% block afterbody %}
+
+<script>
+
+function initVM(data) {
+    $('#div-users').show();
+    var vm = new Vue({
+        el: '#div-users',
+        data: {
+            users: data.users,
+            page: data.page
+        },
+        methods: {
+            previous: function () {
+                gotoPage(this.page.page_index - 1);
+            },
+            next: function () {
+                gotoPage(this.page.page_index + 1);
+            }
+        }
+    });
+}
+
+$(function() {
+    getApi('/api/users?page={{ page_index }}', function (err, results) {
+        if (err) {
+            return showError(err);
+        }
+        $('#div-loading').hide();
+        initVM(results);
+    });
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <nav class="navbar-btn">
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="/manage/blogs">日志</a></li>
+        <li role="presentation"><a href="/manage/comments">评论</a></li>
+        <li role="presentation" class="active"><a href="#">用户</a></li>
+      </ul>
+    </nav>
+    <div style='display:none;' class="alert alert-danger" role="alert"></div>
+
+    <div id="div-users" style="display:none">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>昵称</th>
+                    <th>电子邮件</th>
+                    <th>注册时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-repeat="user: users" >
+                    <td>
+                        <span v-text="user.name"></span>
+                        <span v-if="user.admin" style="color:#d05"><i class="fa fa-key"></i> 管理员</span>
+                    </td>
+                    <td>
+                        <a v-attr="href: 'mailto:'+user.email" v-text="user.email"></a>
+                    </td>
+                    <td>
+                        <span v-text="user.created_at.toDateTime()"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="pagination">
+            <li v-if="! page.has_previous" disabled="disabled"><span><i class="fa fa-angle-double-left"></i></span></li>
+            <li v-if="page.has_previous"><a v-on="click: previous()" href="#0"><i class="fa fa-angle-double-left"></i></a></li>
+            <li><span v-text="page.page_index"></span></li>
+            <li v-if="! page.has_next" disabled="disabled"><span><i class="fa fa-angle-double-right"></i></span></li>
+            <li v-if="page.has_next"><a v-on="click: next()" href="#0"><i class="fa fa-angle-double-right"></i></a></li>
+        </ul>
+    </div>
+
+    <div id="div-loading" class="uk-width-1-1 uk-text-center">
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
+    </div>
+{% endblock %}

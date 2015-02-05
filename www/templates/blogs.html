@@ -1,0 +1,46 @@
+{% extends '__base__1.html' %}
+
+{% block title %}日志{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-9">
+      {% for blog in blogs %}
+          <article>
+              <h2><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h2>
+              <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
+              <p>{{ blog.summary }}</p>
+              <p><a href="/blog/{{ blog.id }}">继续阅读<i class="fa fa-angle-double-right fa-fw"></i></a></p>
+          </article>
+          <hr>
+      {% endfor %}
+          <ul class="pagination">
+          {% if page.has_previous %}
+              <li><a href="/?page={{ page.page_index - 1 }}"><i class="fa fa-angle-double-left"></i></a></li>
+          {% else %}
+              <li disabled="disabled"><span><i class="fa fa-angle-double-left"></i></span></li>
+          {% endif %}
+              <li><span>{{ page.page_index }}</span></li>
+          {% if page.has_next %}
+              <li><a href="/?page={{ page.page_index + 1 }}"><i class="fa fa-angle-double-right fa-fw"></i></a></li>
+          {% else %}
+              <li disabled="disabled"><span><i class="fa fa-angle-double-right"></i></span></li>
+          {% endif %}
+          </ul>
+      </div>
+
+      <aside class="col-sm-3 hidden-xs">
+				  <br>
+					<div class="panel panel-default">
+						<div class="panel-heading">友情链接</div>
+						<div class="list-group">
+							<a class="list-group-item" href="http://www.liaoxuefeng.com/category/0013738748415562fee26e070fa4664ad926c8e30146c67000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; 编程</a>
+							<a class="list-group-item" href="http://www.liaoxuefeng.com/category/0013738748248885ddf38d8cd1b4803aa74bcda32f853fd000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; 读书</a>
+							<a class="list-group-item" href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; Python教程</a>
+							<a class="list-group-item" href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp; Git教程</a>
+						</div>
+					</div>
+				</aside>
+    </div>
+{% endblock %}

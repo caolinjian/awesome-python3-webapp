@@ -1,0 +1,104 @@
+{% extends '__base__1.html' %}
+
+{% block title %}编辑日志{% endblock %}
+
+{% block afterbody %}
+
+<script>
+
+var
+    action = '{{ action }}',
+    redirect = '{{ redirect }}';
+
+function initVue(blog) {
+    var vm = new Vue({
+        el: '#form-blog',
+        data: blog,
+        methods: {
+            submit: function (event) {
+                event.preventDefault();
+                var $btn = $("[type='submit']").button('loading');
+                postApi(action, this.$data, function (err, r) {
+                    if (err) {
+                        showError(err);
+                    }
+                    else {
+                        return location.assign(redirect);
+                    }
+                    $btn.button('reset');
+                });
+            },
+            cancel: function() {
+                location.assign(redirect);
+            }
+        }
+    });
+}
+
+// {% if id %}
+
+$(function () {
+    var $btn = $("[type='submit']").button('loading');
+    getApi('/api/blogs/{{ id }}', function (err, blog) {
+        if (err) {
+            showError(err);
+        }
+        else {
+            $btn.button('reset');
+            initVue(blog);
+        }
+    });
+});
+
+// {% else %}
+
+$(function () {
+    initVue({
+        name: '',
+        summary: '',
+        content: ''
+    });
+});
+
+// {% endif %}
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <nav class="navbar-btn">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#">日志</a></li>
+        <li role="presentation"><a href="/manage/comments">评论</a></li>
+        <li role="presentation"><a href="/manage/users">用户</a></li>
+      </ul>
+    </nav>
+    
+
+    <div class="row">
+      <div class="col-xs-12 col-md-9">
+        <form id="form-blog" v-on="submit: submit">
+            <div style='display:none;' class="alert alert-danger" role="alert"></div>
+            <div class="form-group">
+                <label for="inputtitle">标题:</label>
+                <input class="form-control" v-model="name" name="name" type="text" id="inputtitle" placeholder="标题">
+            </div>
+            <div class="form-group">
+                <label for="inputsummary">摘要:</label>
+                <textarea class="form-control" v-model="summary" rows="4" name="summary" id="inputsummary" placeholder="摘要"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="inputcontent">内容:</label>
+                <textarea class="form-control" v-model="content" rows="16" name="content" id="inputcontent" placeholder="内容"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" data-loading-text="保存ing..." class="btn btn-primary"><i class="fa fa-save"></i> 保存</button>
+                <button v-on="click: cancel()" type="button" class="btn"><i class="fa fa-times"></i> 取消</button>
+            </div>
+        </form>
+      </div>
+    </div>
+
+{% endblock %}

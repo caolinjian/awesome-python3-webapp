@@ -6,7 +6,7 @@ A WSGI application entry.
 
 import logging; logging.basicConfig(level=logging.INFO)
 
-import os, time
+import sys,os, time
 from datetime import datetime
 from transwarp import db
 from transwarp.web import WSGIApplication, Jinja2TemplateEngine
@@ -41,7 +41,7 @@ wsgi.add_interceptor(urls.manage_interceptor)
 wsgi.add_module(urls)
 
 if __name__ == '__main__':
-    wsgi.run(9000,'127.0.0.1')
+    wsgi.run("port","host")
 else:
     logging.info("?????????????????????????????")
     application = wsgi.get_wsgi_application()

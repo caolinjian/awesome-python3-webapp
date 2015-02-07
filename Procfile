@@ -1,1 +1,1 @@
-web: gunicorn www/wsgiapp:app -b $VCAP_APP_HOST:$VCAP_APP_PORT
+web: python www/wsgiapp:app --host=VCAP_APP_HOST --port=$VCAP_APP_PORT
